@@ -1,34 +1,13 @@
-% Instituto Tecnologico de Costa Rica
-% Lenguajes de Programacion
-% Tarea Programada 3 - 
-% Paradigma Logico - Prolog
-% Natan Fernandez de Castro - 2017105774
-% Kevin Rojas Salazar - 2016XXXXXX
 
-% ======================================
-% |            Ejercicio 1             |
-% ======================================
-% Ejercicio que tiene como proposito implementar
-% un grafo dirigido para una empresa distribuidora
-% de comida y buscar la ruta mas corta para entregas
-%
-% --------------------------------------
-% [ Hechos ]
-% --------------------------------------
-
-edge(a,b,10,0.5).
-edge(b,c,3,0.1).
-edge(b,e,5,0.2).
-edge(b,d,4,0.2).
-edge(e,h,2,0.1).
-edge(d,h,1,0.05).
-edge(c,f,2,0.1).
-edge(f,i,3,0.2).
-edge(f,j,3,0.2).
-edge(g,j,1,0.05).
-edge(h,f,1,0.05).
-edge(h,i,6,0.3).
-
+edge(a,b,7).
+edge(a,c,9).
+edge(b,c,10).
+edge(b,d,15).
+edge(c,d,11).
+edge(d,e,6).
+edge(a,f,14).
+edge(c,f,2).
+edge(e,f,9).
 
 path(From,To,Dist) :- edge(To,From,Dist);
 						edge(From,To,Dist).
