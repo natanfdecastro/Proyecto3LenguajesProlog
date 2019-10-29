@@ -1,6 +1,7 @@
 :- dynamic(known/3).
 :- discontiguous menuask/3.
 :- discontiguous ask/2.
+:- use_module(library(jpl)).
 
 insect(spheniscus_humboldti):- backbone(yes), lungs(yes), warm_blooded(yes), wings(yes), feathers(yes), webbed_feet(yes).
 insect(aratinga_solstitialis):- backbone(yes), lungs(yes), warm_blooded(yes), wings(yes), feathers(yes), webbed_feet(no), curved_beak(yes), feathered_face(yes).
@@ -48,25 +49,37 @@ both_sexes_with_horns(X):-ask(both_sexes_with_horns, X).
 skined_horns(X):-ask(skined_horns, X).
 shaggy_fur(X):-ask(shaggy_fur, X).
 
+
+
 % Remember what I've been told is correct
 ask(Attr, Val) :- known(yes, Attr, Val), !.
-menuask(Attr, Val, _) :- known(yes, Attr, Val), !.
+
 % % Remember what I've been told is wrong
 ask(Attr, Val) :- known(_, Attr, Val), !, fail.
-menuask(Attr, Val, _) :- known(_, Attr, Val), !, fail.
+
 % Remember when I've been told an attribute has a different value
 ask(Attr, Val) :- known(yes, Attr, V), V \== Val, !, fail.
-menuask(Attr, Val, _) :- known(yes, Attr, V), V \== Val, !, fail.
-% % I don't know this, better ask!
-ask(Attr, Val) :- write(Attr:Val), write('? '), read(Ans), asserta(known(Ans, Attr, Val)), Ans == yes.
-menuask(Attr, Val, List) :- write('What is the value for '), write(Attr), write('? '), nl,
-                            write(List), nl,
-                            read(Ans),
-                            check_val(Ans, Attr, Val, List),
-                            asserta(known(yes, Attr, Ans)),
-                            Ans == Val.
-check_val(Ans, _, _, List) :- member(Ans, List), !.
-check_val(Ans, Attr, Val, List) :- write(Ans), write(' is not a known answer, please try again.'), nl,
-                                   menuask(Attr, Val, List).
 
-go :- insect(X), write('The insect is '), write(X), nl.
+% % I don't know this, better ask!
+ask(Attr, Val) :- interface(Attr,Val).
+
+
+go :- insect(X) ,write('The insect is '), write(X), nl.
+
+
+interface(Attr,Val) :-
+	atom_concat('Pregunta ',Attr, FAtom),
+	atom_concat(FAtom,Val,FinalAtom),
+	jpl_new('javax.swing.JFrame', ['Claves Dicotomicas'], F),
+	jpl_new('javax.swing.JLabel',['Sistema Experto de Insectos'],LBL),
+	jpl_new('javax.swing.JPanel',[],Pan),
+	jpl_call(Pan,add,[LBL],_),
+	jpl_call(F, add, [Pan],_),
+	jpl_call(F, setLocation, [0,0], _),
+	jpl_call(F, setSize, [480,220], _),
+	jpl_call(F, setVisible, [@(true)], _),
+	jpl_call(F, toFront, [], _),
+	jpl_call('javax.swing.JOptionPane', showInputDialog, [F,FinalAtom], Ans),
+	jpl_call(F, dispose, [], _), 
+	write(Ans),nl,asserta(known(Ans, Attr, Val)), Ans == yes.
+
